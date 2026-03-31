@@ -1,0 +1,18 @@
+[package]
+name = "pocket-ic-harness-macro"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+documentation = "https://docs.rs/pocket-ic-harness-macro/"
+description = "Proc-macro for pocket-ic-harness test attribute."
+include = ["src/**/*", "../../LICENSE", "README.md", "../../CHANGELOG.md"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = { workspace = true }
+syn = { workspace = true }

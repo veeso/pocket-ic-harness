@@ -1,0 +1,27 @@
+[workspace]
+members = ["crates/pocket-ic-harness", "crates/pocket-ic-harness-macro"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85.0"
+authors = ["Christian Visintin <christian.visintin@veeso.dev>"]
+repository = "https://github.com/veeso/pocket-ic-harness"
+license = "MIT"
+keywords = ["ic", "pocket-ic", "testing", "canister", "internet-computer"]
+categories = ["development-tools::testing", "wasm"]
+
+[workspace.dependencies]
+anyhow = "1"
+candid = { version = "0.10", features = ["value"] }
+flate2 = "1"
+ic-agent = "0.47"
+pocket-ic = "13"
+proc-macro2 = "1"
+quote = "1"
+reqwest = "0.13"
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+syn = "2"
+url = "2"

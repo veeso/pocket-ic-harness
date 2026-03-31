@@ -1,0 +1,30 @@
+[package]
+name = "pocket-ic-harness"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+keywords = { workspace = true }
+categories = { workspace = true }
+repository = { workspace = true }
+documentation = "https://docs.rs/pocket-ic-harness/"
+description = "A test harness for Internet Computer canisters using PocketIC."
+include = ["src/**/*", "../../LICENSE", "README.md", "../../CHANGELOG.md"]
+readme = "README.md"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+anyhow = { workspace = true }
+candid = { workspace = true }
+flate2 = { workspace = true }
+ic-agent = { workspace = true }
+pocket-ic = { workspace = true }
+pocket-ic-harness-macro = { path = "../pocket-ic-harness-macro", version = "0.1" }
+reqwest = { workspace = true }
+serde = { workspace = true }
+tokio = { workspace = true }
+url = { workspace = true }
