@@ -10,8 +10,8 @@ categories = { workspace = true }
 repository = { workspace = true }
 documentation = "https://docs.rs/pocket-ic-harness/"
 description = "A test harness for Internet Computer canisters using PocketIC."
-include = ["src/**/*", "../../LICENSE", "README.md", "../../CHANGELOG.md"]
-readme = "README.md"
+include = ["src/**/*", "../../LICENSE", "../../README.md", "../../CHANGELOG.md"]
+readme = "../../README.md"
 
 [package.metadata.docs.rs]
 all-features = true
