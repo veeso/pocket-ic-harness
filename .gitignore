@@ -1,4 +1,5 @@
 /target
+.artifact/
 .claude/
 .idea/
 

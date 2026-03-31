@@ -2,7 +2,6 @@ mod env;
 
 use std::collections::HashMap;
 use std::io::Read as _;
-use std::path::PathBuf;
 
 use candid::{CandidType, Decode, Principal};
 use pocket_ic::nonblocking::PocketIc;
@@ -186,10 +185,9 @@ where
     fn load_wasm(canister: &S::Canister) -> Vec<u8> {
         use crate::Canister;
 
-        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        path.push(canister.as_path());
+        let path = canister.as_path();
 
-        let mut file = std::fs::File::open(&path)
+        let mut file = std::fs::File::open(path)
             .unwrap_or_else(|e| panic!("Failed to open wasm file at {}: {e}", path.display()));
         let mut wasm_bytes = Vec::new();
         file.read_to_end(&mut wasm_bytes)

@@ -25,6 +25,14 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Install Just
+        uses: extractions/setup-just@v3
+
+      - name: Install ic-wasm
+        run: |
+          curl -sSL https://github.com/dfinity/ic-wasm/releases/download/0.9.11/ic-wasm-linux64 -o /usr/local/bin/ic-wasm
+          chmod +x /usr/local/bin/ic-wasm
+
       - name: Install Rust (nightly)
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -38,10 +46,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: $RUST_VERSION
+          targets: wasm32-unknown-unknown
           components: rustfmt, clippy
 
       - name: clippy
         run: cargo clippy --workspace --all-targets -- -D warnings
 
       - name: test
-        run: cargo test --workspace
+        run: just test_all

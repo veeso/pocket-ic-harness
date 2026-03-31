@@ -25,6 +25,15 @@ crates/
 └── pocket-ic-harness-macro/    # Proc-macro crate
     └── src/
         └── lib.rs              # #[pocket_ic_harness::test] attribute macro
+
+integration-tests/
+├── test-canister/              # Simple counter canister for testing (publish = false)
+│   └── src/lib.rs              # get_count (query), increment, set_count (update)
+│
+└── pocket-ic-tests/            # Integration tests using pocket-ic-harness (publish = false)
+    ├── src/lib.rs              # TestCanister enum, TestSetup impl
+    └── tests/
+        └── integration_tests.rs
 ```
 
 ## Core API
@@ -48,9 +57,22 @@ just clippy                  # Run clippy
 # Build check
 cargo check --workspace
 
+# Testing
+just test_all                # Run unit tests + integration tests
+just test                    # Run unit and doc tests (excludes integration tests)
+just integration_test        # Build test canister WASM and run integration tests
+just build_test_canister     # Build test canister WASM to .artifact/
+
 # Publish
 just publish_all             # Publish all crates in dependency order
 ```
+
+### Integration Test Prerequisites
+
+Integration tests require:
+- `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`
+- `ic-wasm`: install from https://github.com/dfinity/ic-wasm/releases
+- `gzip`: typically pre-installed on most systems
 
 ## Conventions
 

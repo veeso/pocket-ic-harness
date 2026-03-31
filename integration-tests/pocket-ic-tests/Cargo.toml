@@ -1,0 +1,14 @@
+[package]
+name = "pocket-ic-tests"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+publish = false
+
+[dependencies]
+candid = { workspace = true }
+pocket-ic-harness = { path = "../../crates/pocket-ic-harness" }
+serde = { workspace = true }
+test-canister = { path = "../test-canister" }
+tokio = { workspace = true }

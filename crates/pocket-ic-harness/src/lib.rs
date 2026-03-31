@@ -96,7 +96,7 @@ pub use self::pocket_ic::PocketIcTestEnv;
 pub trait Canister: Hash + Eq {
     /// Returns the path to the WASM binary for this canister.
     ///
-    /// The path is relative to the crate's `CARGO_MANIFEST_DIR`.
+    /// The path is used as-is when loading the WASM file.
     fn as_path(&self) -> &Path;
 }
 
