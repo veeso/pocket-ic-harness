@@ -30,8 +30,7 @@ jobs:
 
       - name: Install ic-wasm
         run: |
-          curl -sSL https://github.com/dfinity/ic-wasm/releases/download/0.9.11/ic-wasm-linux64 -o /usr/local/bin/ic-wasm
-          chmod +x /usr/local/bin/ic-wasm
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/dfinity/ic-wasm/releases/download/0.9.11/ic-wasm-installer.sh | sh
 
       - name: Install Rust (nightly)
         uses: dtolnay/rust-toolchain@stable
