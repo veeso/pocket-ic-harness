@@ -15,6 +15,10 @@ impl Canister for TestCanister {
             TestCanister::Counter => Path::new("../../.artifact/test_canister.wasm.gz"),
         }
     }
+
+    fn all_canisters() -> &'static [Self] {
+        &[Self::Counter]
+    }
 }
 
 /// Setup configuration that installs the counter canister.

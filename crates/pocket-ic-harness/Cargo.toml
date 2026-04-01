@@ -23,7 +23,7 @@ candid = { workspace = true }
 flate2 = { workspace = true }
 ic-agent = { workspace = true }
 pocket-ic = { workspace = true }
-pocket-ic-harness-macro = { path = "../pocket-ic-harness-macro", version = "0.1" }
+pocket-ic-harness-macro = { path = "../pocket-ic-harness-macro", version = "0.2" }
 reqwest = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }

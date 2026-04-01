@@ -29,6 +29,10 @@
 //!             MyCanister::Backend => Path::new("path/to/backend.wasm.gz"),
 //!         }
 //!     }
+//!
+//!     fn all_canisters() -> &'static [Self] {
+//!         &[Self::Backend]
+//!     }
 //! }
 //!
 //! struct MySetup;
@@ -91,13 +95,23 @@ pub use self::pocket_ic::PocketIcTestEnv;
 ///             MyCanister::Frontend => Path::new("artifacts/frontend.wasm.gz"),
 ///         }
 ///     }
+///
+///     fn all_canisters() -> &'static [Self] {
+///         &[Self::Backend, Self::Frontend]
+///     }
 /// }
 /// ```
-pub trait Canister: Hash + Eq {
+pub trait Canister: Hash + Eq + Sized + Clone + 'static {
     /// Returns the path to the WASM binary for this canister.
     ///
     /// The path is used as-is when loading the WASM file.
     fn as_path(&self) -> &Path;
+
+    /// Returns a static list of all canisters of this type.
+    ///
+    /// The test environment creates all canisters before installing any of them,
+    /// so that init arguments can reference other canisters' principals.
+    fn all_canisters() -> &'static [Self];
 }
 
 /// Trait for defining canister installation and configuration.

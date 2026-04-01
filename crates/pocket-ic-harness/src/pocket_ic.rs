@@ -7,8 +7,8 @@ use candid::{CandidType, Decode, Principal};
 use pocket_ic::nonblocking::PocketIc;
 use serde::de::DeserializeOwned;
 
-use crate::CanisterSetup;
 use crate::actor::{admin, alice, bob};
+use crate::{Canister as _, CanisterSetup};
 
 const DEFAULT_CYCLES: u128 = 2_000_000_000_000_000;
 
@@ -49,6 +49,17 @@ where
             canisters: HashMap::new(),
         };
 
+        // create canisters for all canister types before installation, this is necessary because often
+        // init arguments require the canister IDs of other canisters, so we need to know all canisters before installation.
+        for canister in S::Canister::all_canisters() {
+            let canister_id = env
+                .pic
+                .create_canister_with_settings(Some(admin()), None)
+                .await;
+            env.pic.add_cycles(canister_id, DEFAULT_CYCLES).await;
+            env.canisters.insert(canister.clone(), canister_id);
+        }
+
         S::setup(&mut env).await;
 
         env
@@ -70,8 +81,8 @@ where
 
     /// Install a canister into the test environment.
     ///
-    /// Creates the canister, loads and installs the WASM binary,
-    /// and registers the canister principal in the internal registry.
+    /// Loads and installs the WASM binary into the pre-created canister.
+    /// The canister must have been registered during [`init`](Self::init).
     ///
     /// Returns the canister principal.
     pub async fn install_canister(
@@ -79,11 +90,7 @@ where
         canister: S::Canister,
         init_arg: Vec<u8>,
     ) -> Principal {
-        let canister_id = self
-            .pic
-            .create_canister_with_settings(Some(admin()), None)
-            .await;
-        self.pic.add_cycles(canister_id, DEFAULT_CYCLES).await;
+        let canister_id = *self.canisters.get(&canister).expect("canister not created");
 
         let wasm_bytes = Self::load_wasm(&canister);
 
@@ -91,16 +98,14 @@ where
             .install_canister(canister_id, wasm_bytes, init_arg, Some(admin()))
             .await;
 
-        self.canisters.insert(canister, canister_id);
-
         canister_id
     }
 
-    /// Look up the principal of an installed canister.
+    /// Look up the principal of a registered canister.
     ///
     /// # Panics
     ///
-    /// Panics if the canister has not been installed.
+    /// Panics if the canister has not been registered.
     pub fn canister_id(&self, canister: &S::Canister) -> Principal {
         *self
             .canisters
@@ -183,8 +188,6 @@ where
     }
 
     fn load_wasm(canister: &S::Canister) -> Vec<u8> {
-        use crate::Canister;
-
         let path = canister.as_path();
 
         let mut file = std::fs::File::open(path)
