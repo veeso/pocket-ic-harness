@@ -2,13 +2,13 @@
 name = "pocket-ic-tests"
 version = { workspace = true }
 edition = { workspace = true }
-rust-version = { workspace = true }
 license = { workspace = true }
 publish = false
+rust-version = { workspace = true }
 
 [dependencies]
-candid = { workspace = true }
-pocket-ic-harness = { path = "../../crates/pocket-ic-harness" }
-serde = { workspace = true }
-test-canister = { path = "../test-canister" }
-tokio = { workspace = true }
+candid = { workspace = true, features = ["value"] }
+pocket-ic-harness = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+test-canister = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
