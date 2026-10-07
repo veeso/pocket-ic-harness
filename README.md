@@ -29,6 +29,7 @@ Define your canisters and setup:
 
 ```rust
 use std::path::Path;
+
 use candid::Encode;
 use pocket_ic_harness::{Canister, CanisterSetup, PocketIcTestEnv};
 

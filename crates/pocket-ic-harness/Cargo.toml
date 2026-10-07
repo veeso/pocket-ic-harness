@@ -2,16 +2,16 @@
 name = "pocket-ic-harness"
 version = { workspace = true }
 authors = { workspace = true }
-edition = { workspace = true }
-rust-version = { workspace = true }
-license = { workspace = true }
-keywords = { workspace = true }
 categories = { workspace = true }
-repository = { workspace = true }
 documentation = "https://docs.rs/pocket-ic-harness/"
-description = "A test harness for Internet Computer canisters using PocketIC."
+edition = { workspace = true }
 include = ["src/**/*", "../../LICENSE", "../../README.md", "../../CHANGELOG.md"]
+keywords = { workspace = true }
+license = { workspace = true }
 readme = "../../README.md"
+repository = { workspace = true }
+rust-version = { workspace = true }
+description = "A test harness for Internet Computer canisters using PocketIC."
 
 [package.metadata.docs.rs]
 all-features = true
@@ -19,12 +19,12 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 anyhow = { workspace = true }
-candid = { workspace = true }
+candid = { workspace = true, features = ["value"] }
 flate2 = { workspace = true }
 ic-agent = { workspace = true }
 pocket-ic = { workspace = true }
-pocket-ic-harness-macro = { path = "../pocket-ic-harness-macro", version = "0.2" }
+pocket-ic-harness-macro = { workspace = true }
 reqwest = { workspace = true }
-serde = { workspace = true }
-tokio = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tokio = { workspace = true, features = ["full"] }
 url = { workspace = true }

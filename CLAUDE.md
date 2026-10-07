@@ -50,9 +50,18 @@ integration-tests/
 
 ```bash
 # Code quality
-just check_code              # Format check (nightly) + clippy with -D warnings
-just fmt_nightly             # Format with nightly rustfmt
+just check                   # fmt_check + clippy -D warnings + doc + deny + test
+just fmt                     # Format with dprint (Rust via nightly rustfmt, MD, TOML, YAML)
+just fmt_check               # Check formatting
 just clippy                  # Run clippy
+just doc                     # Build docs, deny warnings
+just deny                    # cargo-deny: advisories, licenses, bans, sources
+just scan_secrets            # trufflehog scan
+just setup_githooks          # Enable .githooks/pre-commit
+
+# Changelog
+just changelog <version>     # Generate CHANGELOG.md with git-cliff
+just changelog_preview <version>
 
 # Build check
 cargo check --workspace
@@ -70,6 +79,7 @@ just publish_all             # Publish all crates in dependency order
 ### Integration Test Prerequisites
 
 Integration tests require:
+
 - `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`
 - `ic-wasm`: install from https://github.com/dfinity/ic-wasm/releases
 - `gzip`: typically pre-installed on most systems
@@ -77,5 +87,5 @@ Integration tests require:
 ## Conventions
 
 - Uses Conventional Commits
-- Always run `cargo +nightly fmt` after changing Rust code
+- Always run `just fmt` after changing Rust code
 - Design docs and plans go in `docs/superpowers/`, never in project root

@@ -1,3 +1,4 @@
+import "./just/changelog.just"
 import "./just/code_check.just"
 import "./just/publish.just"
 import "./just/test.just"

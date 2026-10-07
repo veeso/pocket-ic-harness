@@ -1,20 +1,46 @@
-# Formats the code
-[group('code_check')]
+alias lint := clippy
+
+# Format Markdown, Rust, TOML, and YAML files.
+[group('code-check')]
 fmt args="":
-    cargo fmt --all {{ args }}
+  dprint fmt {{ args }}
 
-# Formats the code using the nightly version of rustfmt
-[group('code_check')]
-fmt_nightly args="":
-    cargo +nightly fmt --all {{ args }}
+# Check formatting without changing files.
+[group('code-check')]
+fmt_check args="":
+  dprint check {{ args }}
 
-# Runs clippy on the code
-[group('code_check')]
+# Run Clippy for every workspace package and feature.
+[group('code-check')]
 clippy args="":
-    cargo clippy --all-features {{ args }}
+  cargo clippy --workspace --all-features {{ args }}
 
-# Runs fmt and clippy on the code. It fails if any of the checks fail
-[group('code_check')]
-check_code:
-    just fmt_nightly "--check"
-    just clippy "-- -D warnings"
+# Build Rust documentation and deny warnings.
+[group('code-check')]
+doc args="":
+  RUSTDOCFLAGS="-D warnings" cargo doc --workspace --all-features --no-deps {{ args }}
+
+# Check advisories, licenses, bans, and dependency sources.
+[group('code-check')]
+deny args="":
+  cargo deny check {{ args }}
+
+# Scan paths for verified or unknown secrets.
+[group('code-check')]
+scan_secrets *args=".":
+  trufflehog filesystem {{ args }} --results=verified,unknown --fail --fail-on-scan-errors --no-update
+
+# Point Git at the tracked hook directory.
+[group('code-check')]
+setup_githooks:
+  git config core.hooksPath .githooks
+  @echo "git hooks installed: core.hooksPath = .githooks"
+
+# Run the complete local quality gate.
+[group('code-check')]
+check:
+  just fmt_check
+  just clippy "-- -D warnings"
+  just doc
+  just deny
+  just test

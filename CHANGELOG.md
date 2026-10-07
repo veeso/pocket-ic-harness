@@ -8,7 +8,7 @@ Released on 2026-04-01
 
 - pre-create canisters before installation to allow referencing canister IDs in init args
   > `Canister` trait now requires `Sized + Clone + 'static`
-bounds and a new `all_canisters()` method.
+  > bounds and a new `all_canisters()` method.
 
 ### Added
 
