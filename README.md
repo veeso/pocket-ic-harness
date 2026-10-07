@@ -25,6 +25,13 @@ with PocketIC:
 
 ## Quick Start
 
+Add to your `Cargo.toml`:
+
+```toml
+[dev-dependencies]
+pocket-ic-harness = "16" # pocket-ic-harness version matches pocket-ic version
+```
+
 Define your canisters and setup:
 
 ```rust
@@ -66,15 +73,6 @@ async fn test_my_canister(ctx: PocketIcTestEnv<MySetup>) {
     let canister_id = ctx.canister_id(&MyCanister::Backend);
     // test your canister...
 }
-```
-
-## Get Started
-
-Add to your `Cargo.toml`:
-
-```toml
-[dev-dependencies]
-pocket-ic-harness = "0.1"
 ```
 
 ## License
