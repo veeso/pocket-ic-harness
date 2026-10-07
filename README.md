@@ -16,9 +16,8 @@ A test harness for Internet Computer canisters using PocketIC.
 pocket-ic-harness provides reusable utilities for integration testing IC canisters
 with PocketIC:
 
-- **`Canister` trait** - define your canisters and their WASM paths
-- **`CanisterSetup` trait** - define how canisters are installed before each test
-- **`PocketIcTestEnv<S>`** - generic test environment with canister installation and registry
+- **`Canister` trait** - define your canisters, their WASM paths, and their init arguments
+- **`PocketIcTestEnv<C>`** - generic test environment that creates and installs every canister
 - **`PocketIcClient`** - typed query/update calls with Candid encoding
 - **`init_new_agent()`** - create IC agents against PocketIC endpoints
 - **`#[pocket_ic_harness::test]`** - proc-macro for automatic setup/teardown
@@ -32,13 +31,13 @@ Add to your `Cargo.toml`:
 pocket-ic-harness = "16" # pocket-ic-harness version matches pocket-ic version
 ```
 
-Define your canisters and setup:
+Define your canisters:
 
 ```rust
 use std::path::Path;
 
 use candid::Encode;
-use pocket_ic_harness::{Canister, CanisterSetup, PocketIcTestEnv};
+use pocket_ic_harness::{Canister, PocketIcTestEnv};
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 enum MyCanister {
@@ -51,25 +50,37 @@ impl Canister for MyCanister {
             MyCanister::Backend => Path::new("path/to/backend.wasm.gz"),
         }
     }
-}
 
-struct MySetup;
+    fn all_canisters() -> &'static [Self] {
+        &[Self::Backend]
+    }
 
-impl CanisterSetup for MySetup {
-    type Canister = MyCanister;
-
-    async fn setup(env: &mut PocketIcTestEnv<Self>) {
-        let init_arg = Encode!(&()).unwrap();
-        env.install_canister(MyCanister::Backend, init_arg).await;
+    fn init_arg(&self, _env: &PocketIcTestEnv<Self>) -> Vec<u8> {
+        Encode!(&()).unwrap()
     }
 }
 ```
 
-Write tests with the proc-macro — canisters are already installed:
+An init argument can reference another canister, because every canister in
+`all_canisters()` is created before any of them is installed:
+
+```rust
+fn init_arg(&self, env: &PocketIcTestEnv<Self>) -> Vec<u8> {
+    match self {
+        MyCanister::Backend => Encode!(&()).unwrap(),
+        MyCanister::Frontend => {
+            let backend = env.canister_id(&MyCanister::Backend);
+            Encode!(&backend).unwrap()
+        }
+    }
+}
+```
+
+Write tests with the proc-macro. Every canister is already installed:
 
 ```rust
 #[pocket_ic_harness::test]
-async fn test_my_canister(ctx: PocketIcTestEnv<MySetup>) {
+async fn test_my_canister(ctx: PocketIcTestEnv<MyCanister>) {
     let canister_id = ctx.canister_id(&MyCanister::Backend);
     // test your canister...
 }
