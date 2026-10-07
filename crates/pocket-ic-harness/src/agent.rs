@@ -1,6 +1,6 @@
 use ic_agent::Agent;
 
-use crate::{CanisterSetup, PocketIcTestEnv};
+use crate::{Canister, PocketIcTestEnv};
 
 /// Creates a new IC agent connected to the PocketIC HTTP endpoint.
 ///
@@ -9,9 +9,9 @@ use crate::{CanisterSetup, PocketIcTestEnv};
 /// # Panics
 ///
 /// Panics if the environment is not in live mode.
-pub async fn init_new_agent<S>(env: &PocketIcTestEnv<S>) -> Agent
+pub async fn init_new_agent<C>(env: &PocketIcTestEnv<C>) -> Agent
 where
-    S: CanisterSetup,
+    C: Canister,
 {
     let endpoint = env.endpoint().expect("context must be in live mode");
 

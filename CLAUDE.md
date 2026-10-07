@@ -14,11 +14,11 @@ reimplement test infrastructure.
 crates/
 ├── pocket-ic-harness/          # Main library
 │   └── src/
-│       ├── lib.rs              # Canister, CanisterSetup traits, re-exports
+│       ├── lib.rs              # Canister trait, re-exports
 │       ├── actor.rs            # Test principals: admin(), alice(), bob()
 │       ├── agent.rs            # init_new_agent() for IC agent creation
 │       ├── client.rs           # PocketIcClient typed query/update wrapper
-│       ├── pocket_ic.rs        # PocketIcTestEnv<S> test environment
+│       ├── pocket_ic.rs        # PocketIcTestEnv<C> test environment
 │       └── pocket_ic/
 │           └── env.rs          # PocketIC binary download and initialization
 │
@@ -28,21 +28,22 @@ crates/
 
 integration-tests/
 ├── test-canister/              # Simple counter canister for testing (publish = false)
-│   └── src/lib.rs              # get_count (query), increment, set_count (update)
+│   └── src/lib.rs              # init (peer), get_peer, get_count (query), increment, set_count (update)
 │
 └── pocket-ic-tests/            # Integration tests using pocket-ic-harness (publish = false)
-    ├── src/lib.rs              # TestCanister enum, TestSetup impl
+    ├── src/lib.rs              # TestCanister enum (Counter, Mirror) with init args
     └── tests/
         └── integration_tests.rs
 ```
 
 ## Core API
 
-- **`Canister`** trait: user-defined enum identifying canisters and their WASM paths
-- **`CanisterSetup`** trait: defines how canisters are installed before each test
-  - Associated type `Canister: Canister`
-  - `async fn setup(env: &mut PocketIcTestEnv<Self>)`
-- **`PocketIcTestEnv<S: CanisterSetup>`**: generic test environment, `init()` calls `S::setup()` automatically
+- **`Canister`** trait: user-defined enum identifying canisters, their WASM paths, and init arguments
+  - `fn as_path(&self) -> &Path`
+  - `fn all_canisters() -> &'static [Self]`
+  - `fn init_arg(&self, env: &PocketIcTestEnv<Self>) -> Vec<u8>`
+- **`PocketIcTestEnv<C: Canister>`**: generic test environment, `init()` creates every canister
+  in `all_canisters()`, then installs each one with its `init_arg()`
 - **`PocketIcClient`**: typed wrapper for query/update calls with live mode detection
 - **`#[pocket_ic_harness::test]`**: proc-macro wrapping async test with setup/teardown
 

@@ -11,17 +11,18 @@ use syn::{FnArg, ItemFn, Pat, parse_macro_input};
 /// Attribute macro for PocketIC integration tests.
 ///
 /// Wraps an async test function with automatic `PocketIcTestEnv` initialization
-/// (including canister setup) and teardown.
+/// (including canister creation and installation) and teardown.
 ///
 /// The function must take exactly one parameter of type
-/// `PocketIcTestEnv<YourSetupType>`.
+/// `PocketIcTestEnv<YourCanister>`, where `YourCanister` implements the
+/// `Canister` trait.
 ///
 /// # Example
 ///
 /// ```rust,ignore
 /// #[pocket_ic_harness::test]
-/// async fn my_test(ctx: PocketIcTestEnv<MySetup>) {
-///     // canisters are already installed via MySetup::setup()
+/// async fn my_test(ctx: PocketIcTestEnv<MyCanister>) {
+///     // every canister in MyCanister::all_canisters() is already installed
 /// }
 /// ```
 #[proc_macro_attribute]

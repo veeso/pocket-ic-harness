@@ -1,34 +1,39 @@
 use std::path::Path;
 
 use candid::Encode;
-use pocket_ic_harness::{Canister, CanisterSetup, PocketIcTestEnv};
+use pocket_ic_harness::{Canister, PocketIcTestEnv};
 
 /// Canisters available in the test environment.
+///
+/// `Mirror` is a second install of the counter WASM whose init argument
+/// carries the principal of `Counter`, listed before `Counter` on purpose to
+/// prove that installation order does not matter for init arguments.
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub enum TestCanister {
     Counter,
+    Mirror,
 }
 
 impl Canister for TestCanister {
     fn as_path(&self) -> &Path {
         match self {
-            TestCanister::Counter => Path::new("../../.artifact/test_canister.wasm.gz"),
+            TestCanister::Counter | TestCanister::Mirror => {
+                Path::new("../../.artifact/test_canister.wasm.gz")
+            }
         }
     }
 
     fn all_canisters() -> &'static [Self] {
-        &[Self::Counter]
+        &[Self::Mirror, Self::Counter]
     }
-}
 
-/// Setup configuration that installs the counter canister.
-pub struct TestSetup;
-
-impl CanisterSetup for TestSetup {
-    type Canister = TestCanister;
-
-    async fn setup(env: &mut PocketIcTestEnv<Self>) {
-        let init_arg = Encode!(&()).unwrap();
-        env.install_canister(TestCanister::Counter, init_arg).await;
+    fn init_arg(&self, env: &PocketIcTestEnv<Self>) -> Vec<u8> {
+        match self {
+            TestCanister::Counter => Encode!(&()).unwrap(),
+            TestCanister::Mirror => {
+                let counter = env.canister_id(&TestCanister::Counter);
+                Encode!(&Some(counter)).unwrap()
+            }
+        }
     }
 }
